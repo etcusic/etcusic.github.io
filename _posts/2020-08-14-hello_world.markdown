@@ -1,11 +1,11 @@
 ---
 layout: post
 title:      "Hello World"
-date:       2020-08-14 21:02:28 +0000
+date:       2020-08-14 17:02:29 -0400
 permalink:  hello_world
 ---
 
-Ok so the title may be a bit cliche, but it just seemed too appropriate not to. 
+Ok - the title may be a bit cliche, but it just seemed too appropriate not to. 
 
 So….. why did I decide to learn software engineering?
 
