@@ -1,7 +1,7 @@
 ---
 layout: post
-title:      "CRUD, Routes, & Controllerster"
-date:       2020-10-09 15:32:11 +0000
+title:      "CRUD, Routes, & Controllers"
+date:       2020-10-09 11:32:12 -0400
 permalink:  crud_routes_and_controllerster
 ---
 
