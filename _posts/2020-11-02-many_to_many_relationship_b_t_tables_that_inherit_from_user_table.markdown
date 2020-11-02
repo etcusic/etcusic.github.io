@@ -1,7 +1,7 @@
 ---
 layout: post
-title:      "*Many to Many* Relationship b/t Tables that Inherit from *User* Table"
-date:       2020-11-02 17:44:05 +0000
+title:      "Many to Many Relationship b/t Tables that Inherit from User Table"
+date:       2020-11-02 12:44:06 -0500
 permalink:  many_to_many_relationship_b_t_tables_that_inherit_from_user_table
 ---
 
@@ -10,17 +10,17 @@ For this project we need to have a many to many relationship with a has_many thr
 
 **1)**  Don’t bother with a separate user model/table. This will mean that I don’t have to set up an extra relationship, which sounds less messy.
 
-**Problem =>** This will mean that the code will not be DRY, because I will have to write the user sign up/in/out code for both the tutors and students models/controllers (plus another time if I want to add an admin or any other model)
+**Problem =>** This will mean that the code will not be DRY, because I will have to write all the "user" code for both the tutors and students tables and controllers (plus another time if I want to add an admin or any other model)
 
 **Conclusion =>** Can’t do it. Gotta keep the code DRY.
 
-**2)**  Set up a user parent class for the tutor and student model to inherit from (class Tutor < User  &&  class Student < User).
+**2)**  Set up a User parent class for the tutor and student model to inherit from (class Tutor < User  &&  class Student < User).
 
-**Problem =>** While this cleans up the code in the models, it still doesn’t solve my DRY issues with the tables and controllers, as I will have to repeat user columns in the tables and user functionality in the controllers.
+**Problem =>** While this cleans up the code in the models, it still doesn’t solve my DRY issues with the tables and controllers, as I will have to repeat user columns in the tables and user functionality in the controllers. Plus, it doesn't allow me to set up unique attributes for the Tutor class and Student class.
 
-**Conclusion =>** Still not DRY enough
+**Conclusion =>** Still not DRY enough and lacks some important functionality.
 
-**3)**  Set up a user parent class for tutors and students AND a has_one/belongs_to relationship between these models. This way Tutors & Students inherit attributes from the User class, yet have their own unique attributes. This will also create greater flexibility if I want to add an Admin model or a Parent/Guardian model to inherit basic User attributes in the application. This is what it would the relationships would look like in the tables and models:  
+**3)**  Set up a user parent class for tutors and students AND a has_one/belongs_to relationship between these models. This way Tutors & Students inherit attributes from the User class, yet have their own unique attributes. This will also create greater flexibility if I want to add something like an Admin model to inherit basic User attributes in the application. This is what the relationships would look like in the tables and models:  
 
 ```
 UsersTable
@@ -53,7 +53,7 @@ has_many :appointments
 has_many :tutors, through: :appointments
 ```
 
-**Problem =>** This doesn't work, which I was really bummed to realize. The issue is that when I have the Tutor and Student class inherit from User, it completely nullifies the table structure for their respective tables. The only attributes that can then be ascribes to tutors and students are the ones outlined in the users table (name, email, password)
+**Problem =>** This doesn't work, which I was really bummed to realize. The issue is that when I have the Tutor and Student class inherit from User, it completely nullifies the table structure for their respective tables. The only attributes that can then be ascribed to tutors and students are the ones outlined in the users table (name, email, password)
 
 **Conclusion =>** Doesn't work, on to the next one...
 
