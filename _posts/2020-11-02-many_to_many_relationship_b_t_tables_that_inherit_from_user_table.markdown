@@ -1,6 +1,6 @@
 ---
 layout: post
-title:      "Many to Many Relationship b/t Tables that Inherit from User Table"
+title:      "Many to Many Relationship between Tables that Inherit from User Table"
 date:       2020-11-02 12:44:06 -0500
 permalink:  many_to_many_relationship_b_t_tables_that_inherit_from_user_table
 ---
