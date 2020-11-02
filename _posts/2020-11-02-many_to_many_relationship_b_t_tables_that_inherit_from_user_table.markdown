@@ -103,5 +103,5 @@ belongs_to :student
 ```
 
 
-**Alternative =>**  don’t set up the the explicit has_one portion of the user/tutor/student relationship, and just add belongs_to to the student & tutor tables/models. This will still keep the code pretty DRY, but I won't be able to access the relationship bidirectionally. So `tutor.user.name` will work just fine, but I can't do `user.tutor.resume`
+**Alternative =>**  Don’t set up the the explicit has_one portion of the user/tutor/student relationship, and just add belongs_to to the student & tutor tables/models. This will still keep the code pretty DRY, but I won't be able to access the relationship bidirectionally. So `tutor.user.name` will work just fine, but I can't do `user.tutor.resume`
 
