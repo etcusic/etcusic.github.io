@@ -27,18 +27,17 @@ The Single Table Inheritance Model is best described as consolidating all the at
 
 ```
 CreateUsersTable
-t.string  :type
-t.string  :name
-t.string  :email
-t.string  :password_digest
-t.text  :resume     #=> tutor attr
-t.string  :zoom_link   #=> tutor attr
-t.text  :about_me   #=> student attr
-t.integer  :level   #=> student attr
-t.integer  :gold_stars   #=> student attr
+t.string :type
+t.string :name
+t.string :email
+t.string :password_digest
+t.text :resume     #=> tutor attr
+t.string :zoom_link   #=> tutor attr
+t.text :about_me   #=> student attr
+t.integer :level   #=> student attr
+t.integer :gold_stars   #=> student attr
 
 class User < ApplicationRecord
-  self.abstract_class = true
 	validates :name, :email, presence: true
 	has_secure_password
 class Tutor < User
@@ -61,24 +60,24 @@ I would describe an MTI as essentially the inverse of an STI. The STI has all of
 
 ```
 TutorsTable
-t.string  :name
-t.string  :email
-t.string  :password_digest
-t.text  :resume  
-t.string  :zoom_link  
+t.string :name
+t.string :email
+t.string :password_digest
+t.text :resume  
+t.string :zoom_link  
 
 StudentsTable
-t.string  :name
-t.string  :email
-t.string  :password_digest
-t.text  :about_me 
-t.integer  :level  
-t.integer  :gold_stars   
+t.string :name
+t.string :email
+t.string :password_digest
+t.text :about_me 
+t.integer :level  
+t.integer :gold_stars   
 
 class User < ApplicationRecord
   self.abstract_class = true
-	validates :name, :email, presence: true
-	has_secure_password
+validates :name, :email, presence: true
+has_secure_password
 
 class Tutor < User
 class Student < User
