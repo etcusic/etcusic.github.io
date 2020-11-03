@@ -113,6 +113,6 @@ class Student < ApplicationRecord   belongs_to :user
 
 This actually keeps things pretty DRY. Granted, it’s not ideal in the way that it doesn’t represent reality well since a user IS a tutor or student, not HAS a tutor or student. Also, there is the question of whether this level of object separation could lead to errors or weird edge cases down the line - we'd have to be extra careful with editing and updating since there are actually 2 separate objects at play for a given instance. 
 
-I'll admit it's a bit clunky conceptually, but it would be functional. And honestly, I hate it about as much as the STI and MTI options anyway
+I'll admit it's clunky conceptually, but it would be functional. And honestly, I hate it about as much as the STI and MTI options anyway
 
 ![](https://media.tenor.com/images/f203bbd60006dedaaef4c0fae63c7fdd/tenor.gif)
