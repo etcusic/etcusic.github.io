@@ -1,6 +1,6 @@
 ---
 layout: post
-title:      "STI, MTI, and Relating Different Types of User"
+title:      "STI, MTI, and Relating Different Types of Users"
 date:       2020-11-02 21:25:30 -0500
 permalink:  sti_mti_and_different_types_of_users
 ---
