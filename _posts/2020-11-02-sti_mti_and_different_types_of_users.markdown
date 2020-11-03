@@ -10,12 +10,14 @@ For this project we need to have a many to many relationship with a has_many thr
 
 The problem =>  To me, the cleanest/DRYest approach was going to have a User parent class and table from which Tutors & Students would inherit. Something like this:
 
+```
 Class User < ApplicationRecord  #(with user validations set up)
 Class Tutor < User
 Class Student <User
 UsersTable => name:string, email:string, password_digest:string
 TutorsTable => resume:text, zoom_link:string, rating:integer
 StudentsTable => about_me:text, level:integer, gold_stars:integer
+```
 
 Unfortunately, this does not work. It would appear as though ActiveRecord is not smart enough to simply allow Tutors & Students to inherit the User info. A big part of this is that when a model inherits from a parent class (Tutor < User), then ActiveRecord will not acknowledge the child’s table and only recognize the parent’s table. So, if I do Tutor.create(name: “Joey”, rating: 4) - it will come back with an error that it does not recognize “rating” as a Tutor attribute. It reads “name” from the User table just fine, though. There is a way to keep the parent class from nullifying the child class with “abstract_class” - however, if the parent class is designated as abstract, then it cannot carry a corresponding table with it.
 
@@ -31,15 +33,15 @@ t.string :type
 t.string :name
 t.string :email
 t.string :password_digest
-t.text :resume     #=> tutor attr
-t.string :zoom_link   #=> tutor attr
-t.text :about_me   #=> student attr
-t.integer :level   #=> student attr
-t.integer :gold_stars   #=> student attr
+t.text :resume  #=> tutor attr
+t.string :zoom_link  #=> tutor attr
+t.text :about_me  #=> student attr
+t.integer :level  #=> student attr
+t.integer :gold_stars  #=> student attr
 
 class User < ApplicationRecord
-	validates :name, :email, presence: true
-	has_secure_password
+ validates :name, :email, presence: true
+ has_secure_password
 class Tutor < User
 class Student < User
 ```
@@ -52,11 +54,11 @@ User.create(type: Student, name: "First Last", email: "student@mail", level: nil
 #=> <Student id: 1, name: "First Last", email: "student@mail", password: nil, zoom_link: nil, resume: nil, about_me: nil, level: 5, gold_stars: nil>
 ```
 
-Note: the object shows up as an instance of Student, but it can also be accessed via User. If you were to type in `User.all` that Student object will show up in the array like that.
+Note: the object shows up as an instance of Student, but it can also be accessed via User. If you were to type in `User.all` the Student object will show up in the array like that.
 
 This certainly does solve the problem, and I have a functional inheritance, but I really don't like all of the extra attributes that every User instance will be carrying around as nil. Not only does it not appease my code OCD, but it can also get heavily bogged down if I decide to expand the types of users into different types/roles. So let's look at a Multi Table Inheritance Model to see if we can clean things up......
 
-I would describe an MTI as essentially the inverse of an STI. The STI has all of the various attributes at the very top of the model tree, and then distributes them down accordingly, but the MTI doesn't hold any of that table info at the top (in this case User), and instead separates each table into with its specific functions. In order to accomplish this, though, we need to specify that the parent class is "abstract" - which means that it won't have a corresponding table, and can only pass down other functionality like methods and validations
+I would describe an MTI as essentially the inverse of an STI. The STI has all of the various attributes at the very top of the model tree, and then distributes them down according to type, but the MTI doesn't hold any of that table info at the top (in this case User), and instead separates each table with its specific functions. In order to accomplish this, though, we need to specify that the parent class is "abstract" - which means that it won't have a corresponding table, and can only pass down other functionality like methods and validations
 
 ```
 TutorsTable
@@ -75,9 +77,9 @@ t.integer :level
 t.integer :gold_stars   
 
 class User < ApplicationRecord
-  self.abstract_class = true
-validates :name, :email, presence: true
-has_secure_password
+ self.abstract_class = true
+ validates :name, :email, presence: true
+ has_secure_password
 
 class Tutor < User
 class Student < User
