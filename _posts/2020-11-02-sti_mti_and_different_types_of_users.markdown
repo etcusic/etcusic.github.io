@@ -39,6 +39,9 @@ t.text :about_me  #=> student attr
 t.integer :level  #=> student attr
 t.integer :gold_stars  #=> student attr
 
+CreateTutorsTable
+CreateStudentsTable
+
 class User < ApplicationRecord
  validates :name, :email, presence: true
  has_secure_password
@@ -46,7 +49,7 @@ class Tutor < User
 class Student < User
 ```
 
-As you can see, the table contains both Tutor columns and Student columns even though only one or the other will be created per user. Also, the "tutors" and "students" tables aren't even necessary to build - just their models that inherit from User (which is kinda cool). You may also notice, there is an extra attribute “type”, which will allow us to specify what kind of object we are creating. With this setup, here are two ways we can create the same object: 
+As you can see, the table contains both Tutor columns and Student columns even though only one or the other will be created per user. You may also notice, there is an extra attribute “type”, which will allow us to specify what kind of object we are creating. With this setup, here are two ways we can create the same object: 
 
 ```
 Student.create(name: "First Last", email: "student@mail", level: 5)
@@ -116,3 +119,14 @@ This actually keeps things pretty DRY. Granted, it’s not ideal in the way that
 I'll admit it's clunky conceptually, but it would be functional. And honestly, I hate it about as much as the STI and MTI options anyway
 
 ![](https://media.tenor.com/images/f203bbd60006dedaaef4c0fae63c7fdd/tenor.gif)
+
+
+**UPDATE =>**  I decided to go with Single Table Inheritance. One big reason for this is that it emulates the data structure/flow that I was wanting to achieve with a users parent table that different types of users inherit from. With the Multiple Table Inheritance design I wouldn't be able to access different users using the class_type User. 
+```
+# STI
+Student.create(name: "Jack")  #=> creates a User object with type Student that can be accessed through both User and Student classes
+
+# MTI
+Student.create(name: "Jill")  #=> creates a Student object that inherits behavior from User class (not accessible through User class)
+```
+This just means that more logic would need to be added to the User class in the MTI structure in oder to keep the extra logic out of the controllers, but ultimately my code's behavior and structure would be different than having a parent table to work with (this is me naively optimistic that I will have time to figure out how to metaprogram a gem that can give me the behavior I want). I still really hate all the nil attributes within my user objects, but at the end of the day it won't affect a small scale practice project, and the code's logic will be a bit more succinct with the STI foundation.
