@@ -87,6 +87,32 @@ class Student < User
 
 As you can tell, this is not DRY as we are repeating :name, :email, and :password for each type of user. Not great. It's definitely more code here on the setup, but as we think of the application growing and adding more types of users, at least each type of user will ONLY have the attributes that are associated with its model rather than carrying a bunch of nil values around from a bloated User table. I hate repetitive code, but I think in this case I'll go with the Multi Table Inheritance setup, because even though it looks more repetitive on the setup, I believe that down the road it will save a lot of memory and speed with the database since its instances won't be carrying extra nil attributes along with them.
 
-I did also look into the option of User and Tutor/Student being completely separated out and then setting up a belongs_to relationship from Tutor & Student so that they would have to access their name, email, and password through the relationship `tutor.user.name` - but this level of dissassociation seemed like it would be problematic and possibly toss a wrench into the database at some point. I didn't feel like it was worth even setting up the code examples.
+One last option that does DRY things up a bit. Rather than using a parent class and table with direct inheritance, we create a `belongs_to` relationship where the child classes `belongs_to` the parent class
 
-And then the last option would be to do some metaprogramming. Which is very tempting as I find these associations to simply not be clean enough for something that seems so commonplace and basic as a simple Table/Model inheritance scheme. To be continued???
+```
+UsersTable
+t.string  :name
+t.string  :email
+t.string  :password_digest
+
+TutorsTable
+t.text :resume 
+t.string :zoom_link
+t.integer :user_id
+
+StudentsTable
+t.text  :about_me
+t.integer  :level
+t.integer  :gold_stars 
+t.integer :user_id
+
+class User < ApplicationRecord
+class Tutor < ApplicationRecord   belongs_to :user
+class Student < ApplicationRecord   belongs_to :user
+```
+
+This actually keeps things pretty DRY. Granted, it’s not ideal in the way that it doesn’t represent reality well since a user IS a tutor or student, not HAS a tutor or student. Also, there is the question of whether this level of object separation could lead to errors or weird edge cases down the line - we'd have to be extra careful with editing and updating since there are actually 2 separate objects at play for a given instance. 
+
+I'll admit it's a bit clunky conceptually, but it would be functional. And honestly, I hate it about as much as the STI and MTI options anyway
+
+![](https://media.tenor.com/images/f203bbd60006dedaaef4c0fae63c7fdd/tenor.gif)
