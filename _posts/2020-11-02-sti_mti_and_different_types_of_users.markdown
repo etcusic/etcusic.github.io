@@ -6,7 +6,7 @@ permalink:  sti_mti_and_different_types_of_users
 ---
 
 
-For this project we need to have a many to many relationship with a has_many through relationship. I decided to do an application in which tutors can have many students through appointments and vice versa. With both tutors and students being a type of user I had a decision to make about how I wanted to set up the tables and classes in order to have the cleanest/clearest setup possible for my relationships. For a base user model, I wanted there to be a name, email, and password_digest, and then tutors & students would have several of their own unique attributes ascribed to their models. There are a number of ways to set this up as models and tables, so I had to sort through them to find the clearest and DRYest way possible.
+For this project we need to have a many-to-many relationship with a has_many through relationship. I decided to do an application in which tutors can have many students through appointments and vice versa. With both tutors and students being a type of user I had a decision to make about how I wanted to set up the tables and classes in order to have the cleanest/clearest setup possible for my relationships. For a base user model, I wanted there to be a name, email, and password_digest, and then tutors & students would have several of their own unique attributes ascribed to their models. There are a number of ways to set this up as models and tables, so I had to sort through them to find the clearest and DRYest way possible.
 
 The problem =>  To me, the cleanest/DRYest approach was going to have a User parent class and table from which Tutors & Students would inherit. Something like this:
 
@@ -28,19 +28,19 @@ So then, how do I work around this issue? Well, there are many different ways of
 The Single Table Inheritance Model is best described as consolidating all the attribute info of similar models into one table, and then distributing those attributes selectively according to the type of class that gets instantiated. For my Users/Tutors/Students example, it would look something like this:
 
 ```
-CreateUsersTable
-t.string :type
-t.string :name
-t.string :email
-t.string :password_digest
-t.text :resume  #=> tutor attr
-t.string :zoom_link  #=> tutor attr
-t.text :about_me  #=> student attr
-t.integer :level  #=> student attr
-t.integer :gold_stars  #=> student attr
+UsersTable
+  t.string :type
+  t.string :name
+  t.string :email
+  t.string :password_digest
+  t.text :resume  #=> tutor attr
+  t.string :zoom_link  #=> tutor attr
+  t.text :about_me  #=> student attr
+  t.integer :level  #=> student attr
+  t.integer :gold_stars  #=> student attr
 
-CreateTutorsTable
-CreateStudentsTable
+TutorsTable
+StudentsTable
 
 class User < ApplicationRecord
  validates :name, :email, presence: true
@@ -90,7 +90,7 @@ class Student < User
 
 As you can tell, this is not DRY as we are repeating :name, :email, and :password for each type of user. Not great. It's definitely more code here on the setup, but as we think of the application growing and adding more types of users, at least each type of user will ONLY have the attributes that are associated with its model rather than carrying a bunch of nil values around from a bloated User table. I hate repetitive code, but I think in this case I'll go with the Multi Table Inheritance setup, because even though it looks more repetitive on the setup, I believe that down the road it will save a lot of memory and speed with the database since its instances won't be carrying extra nil attributes along with them.
 
-One last option that does DRY things up a bit. Rather than using a parent class and table with direct inheritance, we create a `belongs_to` relationship where the child classes `belongs_to` the parent class
+One last option that does DRY things up a bit. Rather than using a parent class and table with direct inheritance, we create a `belongs_to` relationship where the child class `belongs_to` the parent class
 
 ```
 UsersTable
@@ -132,4 +132,17 @@ Student.create(name: "Jill")  #=> creates a Student object that inherits behavio
 This just means that more logic would need to be added to the User class in the MTI structure in oder to keep the extra logic out of the controllers, but ultimately my code's behavior and structure would be different than having a parent table to work with (this is me naively optimistic that I will have time to figure out how to metaprogram a gem that can give me the behavior I want). I still really hate all the nil attributes within my user objects, but at the end of the day it won't affect a small scale practice project, and the code's logic will be a bit more succinct with the STI foundation.
 
 
-**UPDATE #2 =>**  Keeping it dry hasn't turned out how I hoped. The issue I'm having is trying to leverage the advantages of the forms (passing instances to and from them). I was trying to pipe the majority of the work through the UsersController into User view pages, and then use logic in those view templates to discern which partial to apply to that template. Unfortunately, the forms in these templates are looking for the class of the user and direct the instance to its corresponding controller. I tried several workarounds, but I've finally given up. Rails and its magic just wasn't intended to handle this sort of thing, so keeping the app DRY is not possible.
+**UPDATE #2 =>**  The refactoring didn't go quite as smoothly as I'd hoped. Due to Rails magic it tries to route the user based on its type (it reads the class as either Tutor or Student rather than User) - and so in the forms its looking for a TutorsController or a StudentsController, which makes it difficult to not repeat code by essentially duplicating the UsersController to satisfy those classes.
+
+After a lot of playing around with it (and I mean a LOT), I was eventually able to get most of the actions in the UsersController. Ultimately, though, I had to put #edit and #update in the Tutors and Students controllers in order to leverage the ability to pass an instance to my forms both ways. Here are what my routes ended up looking like:
+```
+resources :users, only: [:new, :create, :show, :edit, :destroy] do
+    resources :appointments
+end 
+
+resources :students, only: [:index, :edit, :update]
+resources :tutors, only: [:index, :edit, :update]
+```
+I kept an #edit in the UsersController to handle directing the user to the correct controller, and of course had index split out in order to view all users by type.
+
+And there it is. As DRY as I could make it. I'm still wondering if there is a better way to do this, and whether or not splitting routes out like this could create issues down the road as I build onto it. Another idea I had was to create an attribute similar to :type, but that wouldn't change the class of the User. Then I could set up modules according to their category/type in order handle different functionality while maintaining a single table for User class. That way I wouldn't have the issue of Rails reading the User type and trying to direct it to that type's controller. (I can't do that with this particular project, though, because the requirement is to have a many-to-many relationship, which I had built to be between Tutor and Student)
