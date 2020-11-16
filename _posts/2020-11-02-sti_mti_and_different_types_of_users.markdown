@@ -146,3 +146,38 @@ resources :tutors, only: [:index, :edit, :update]
 I kept an #edit in the UsersController to handle directing the user to the correct controller, and of course had index split out in order to view all users by type.
 
 And there it is. As DRY as I could make it. I'm still wondering if there is a better way to do this, and whether or not splitting routes out like this could create issues down the road as I build onto it. Another idea I had was to create an attribute similar to :type, but that wouldn't change the class of the User. Then I could set up modules according to their category/type in order handle different functionality while maintaining a single table for User class. That way I wouldn't have the issue of Rails reading the User type and trying to direct it to that type's controller. (I can't do that with this particular project, though, because the requirement is to have a many-to-many relationship, which I had built to be between Tutor and Student)
+
+
+**UPDATE #3 =>**  I know, I'm ridiculous. But, I had one more refactoring idea to carry out. This time I decided to incorporate a ParentController inheritance with UsersController as the parent class and Students and Tutors being children of that controller setup. I've refactored the code and got it functional, but I still have a lot to learn on how to maximize this setup for handling multiple types of Users. Here is what the general structure looks like 
+(note: I used the same table and class structure from the above STI section)
+
+```
+class UsersController < ApplicationController
+  def new
+	def create
+	def show
+	def edit
+	def update
+	def destroy
+	
+class StudentsController < ApplicationController
+  def index
+	
+class TutorsController < ApplicationController
+  def index
+	
+Routes:
+  resources :appointments, only: [:new, :create]
+
+  resources :students do
+    resources :appointments, only: [:index, :show, :edit, :update, :destroy]
+  end 
+
+  resources :tutors do
+    resources :appointments, only: [:index, :show, :edit, :update, :destroy]
+  end 
+```
+
+I still need to play around with this structure to figure out the best way to configure it (hopefully I can get around to writing a separate blog about the ins and outs of this type of class and route inheritance). I did need to write a couple of helper methods in the application controller to handle some of the routing decisions to direct it to either Students or Tutors, but it's pretty light at the moment. Not sure how it would hold up to growth with its current structure, though.
+
+One aspect I need to explore more is using `resources :users` for some of the routing actions. That will allow me to clean up my views directory a bit more (at the moment there is a good bit of repetition between the tutors and students). It should also allow me to reuse some of the routing names as well, but we'll see. My ideas always sound way better than they turn out in implementation, lol.
