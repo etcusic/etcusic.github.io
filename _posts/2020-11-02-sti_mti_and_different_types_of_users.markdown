@@ -154,11 +154,11 @@ And there it is. As DRY as I could make it. I'm still wondering if there is a be
 ```
 class UsersController < ApplicationController
   def new
-	def create
-	def show
-	def edit
-	def update
-	def destroy
+def create
+def show
+def edit
+def update
+def destroy
 	
 class StudentsController < ApplicationController
   def index
@@ -182,4 +182,4 @@ I still need to play around with this structure to figure out the best way to co
 
 One aspect I need to explore more is using `resources :users` for some of the routing actions. That will allow me to clean up my views directory a bit more (at the moment there is a good bit of repetition between the tutors and students). It should also allow me to reuse some of the routing names as well, but we'll see. My ideas always sound way better than they turn out in implementation, lol.
 
-link for Controller Inheritance blog submission: https://etcusic.github.io/many_to_many_relationship_b_t_tables_that_inherit_from_user_table
+link for a more in depth look at this Controller Inheritance: https://etcusic.github.io/many_to_many_relationship_b_t_tables_that_inherit_from_user_table
