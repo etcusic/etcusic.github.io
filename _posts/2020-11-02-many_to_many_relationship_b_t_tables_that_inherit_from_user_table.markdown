@@ -1,6 +1,6 @@
 ---
 layout: post
-title:      "Different Types of Users & Controller Inheritance with Rails"
+title:      "Controller Inheritance & Different Types of Users with Rails"
 date:       2020-11-02 12:44:06 -0500
 permalink:  many_to_many_relationship_b_t_tables_that_inherit_from_user_table
 ---
