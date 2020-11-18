@@ -182,4 +182,4 @@ I still need to play around with this structure to figure out the best way to co
 
 One aspect I need to explore more is using `resources :users` for some of the routing actions. That will allow me to clean up my views directory a bit more (at the moment there is a good bit of repetition between the tutors and students). It should also allow me to reuse some of the routing names as well, but we'll see. My ideas always sound way better than they turn out in implementation, lol.
 
-link for a more in depth look at this Controller Inheritance: https://etcusic.github.io/many_to_many_relationship_b_t_tables_that_inherit_from_user_table
+link for a more in depth look at this Controller Inheritance and how to incorporate their helper methods: https://etcusic.github.io/many_to_many_relationship_b_t_tables_that_inherit_from_user_table
