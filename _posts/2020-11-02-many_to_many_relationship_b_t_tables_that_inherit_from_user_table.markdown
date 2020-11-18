@@ -1,107 +1,119 @@
 ---
 layout: post
-title:      "Many to Many Relationship between Tables that Inherit from User Table"
+title:      "Different Types of Users & Controller Inheritance with Rails"
 date:       2020-11-02 12:44:06 -0500
 permalink:  many_to_many_relationship_b_t_tables_that_inherit_from_user_table
 ---
 
 
-For this project we need to have a many to many relationship with a has_many through relationship. I decided to do an application in which tutors can have many students through appointments and vice versa. With both tutors and students being a type of user I had a decision to make about how I wanted to set up the tables and classes in order to have the cleanest/clearest setup possible for my relationships. Here are some options I considered:
+Real quick on the structure of this application: I used single table inheritance to set up my User model, which has an attribute 'type' that assigns a class type (Tutor or Student) to a newly created instance. The idea is that I wanted to have a many to many relationship between Tutors and Students through Appointments (which has a belongs to relationship with both). In the case of this application, both types of Users are going to have the same core functionality (name, email, password, etc), but each will also have their own unique attributes, and (depending on their class type) will have access to a limited scope of the application. For a more in depth look at the setup, here is the previous blog I wrote about this table and model structure:   https://etcusic.github.io/sti_mti_and_different_types_of_users)
 
-**1)**  Don’t bother with a separate user model/table. This will mean that I don’t have to set up an extra relationship, which sounds less messy.
+Now, onto the controllers. The reasoning behind trying out a controller inheritance was because my different User types were being read by Rails as either Tutor or Student class, which means that when I put in `user_path(current_user)` - Rails would bring up an error because it's trying to find either TutorsController or StudentsController when it checks the class type of my user. In the moment I was able to work around it by typing in something like `redirect_to "/users/#{current_user.id}"`, when I needed to get my routing done, but I found it messy and ugly, and it just felt like I was working *against* Rails rather than *with* it. 
 
-**Problem =>** This will mean that the code will not be DRY, because I will have to write all the "user" code for both the tutors and students tables and controllers (plus another time if I want to add an admin or any other model)
+I mulled over some different options and was compelled by the idea of controller inheritance. For one, it bugged me that the urls were `/users` for both types, and I really hated the idea of writing nearly identitcal code for both StudentsController and TutorsController on top of the identical code I would need to write in their views as well. But I digress....
 
-**Conclusion =>** Can’t do it. Gotta keep the code DRY.
-
-**2)**  Set up a User parent class for the tutor and student model to inherit from (class Tutor < User  &&  class Student < User).
-
-**Problem =>** While this cleans up the code in the models, it still doesn’t solve my DRY issues with the tables and controllers, as I will have to repeat user columns in the tables and user functionality in the controllers. Plus, it doesn't allow me to set up unique attributes for the Tutor class and Student class.
-
-**Conclusion =>** Still not DRY enough and lacks some important functionality.
-
-**3)**  Set up a user parent class for tutors and students AND a has_one/belongs_to relationship between these models. This way Tutors & Students inherit attributes from the User class, yet have their own unique attributes. This will also create greater flexibility if I want to add something like an Admin model to inherit basic User attributes in the application. This is what the relationships would look like in the tables and models:  
+Here is the basic structure of my application's controllers, going through them one by one:
 
 ```
-UsersTable
-t.string :name
-t.string :email
-t.string :password_digest
-
-TutorsTable
-t.text :resume
-t.integer :rating
-t.integer :user_id (belongs to user)
-
-StudentsTable
-t.text :about_me
-t.integer :gold_stars
-t.integer :user_id (belongs to user)
-
-class User < ApplicationRecord
-has_one :tutor
-has_one :student
-
-class Tutor < User
-belongs_to :user
-has_many :appointments
-has_many :students, through: :appointments
-
-class Student < User
-belongs_to :user
-has_many :appointments
-has_many :tutors, through: :appointments
+ApplicationController < ActionController::Base
+  def current_user
+	  @user ||= User.find_by_id(session[:user_id])
+	end
+	
+	def logged_in?
+	  session[:user_id]
+	end
+end
 ```
 
-**Problem =>** This doesn't work, which I was really bummed to realize. The issue is that when I have the Tutor and Student class inherit from User, it completely nullifies the table structure for their respective tables. The only attributes that can then be ascribed to tutors and students are the ones outlined in the users table (name, email, password)
-
-**Conclusion =>** Doesn't work, on to the next one...
-
-**4)**  Basically, the same as above, except that the Tutor and Student models don't inherit from the User class. This way I can at least set up code to access the relatioships bidirectionally: `tutor.user.name` or `user.tutor.resume`
-
-**Problem =>** This isn't quite as clean as I was hoping to have it. My goal was to set it up to where all the user information for a tutor or student just inherits from the User model/table, and then I could write `tutor.name`
-
-**Conclusion =>** While it's not quite as neat and tidy as I was hoping, it is functional, DRY, and fairly intuitive, so that's what I'm going to roll with:
+This is definitely not an exhaustive look at the helper methods and before actions that I had set up in the ApplicationController, but you get the idea. As you can see, I'm using `@user` as my user's variable no matter what the class, which allows me to reuse this variable all over the application no matter what the class type of the user is.  (quick note: I'm skipping over the SessionsController because it needed very minimal refactoring) - Ok, now on to the UsersController:
 
 ```
-UsersTable
-t.string :name
-t.string :email
-t.string :password_digest
+UsersController < ApplicationController
+  before_action :current_user, only: [:show, :edit, :update, :destroy]
+	def new
+        @user = new_user
+    end
 
-TutorsTable
-t.text :resume
-t.integer :rating
-t.integer :user_id (belongs to user)
+    def create
+        @user = User.new(user_params)
+        if @user.save   
+            session[:user_id] = @user.id
+            redirect_to show_path
+        else
+            render :new
+        end
+    end
 
-StudentsTable
-t.text :about_me
-t.integer :gold_stars
-t.integer :user_id (belongs to user)
+    def show
+    end
 
-AppointmentsTable
-t.integer :tutor_id (belongs_to :tutor)
-t.integer :student_id (belongs_to :student)
+    def edit
+    end
 
-class User < ApplicationRecord
-has_one :tutor
-has_one :student
+    def update
+        if @user.update(user_params)
+            redirect_to show_path 
+        else 
+            render :edit
+        end
+    end
 
-class Tutor < ApplicationRecord
-belongs_to :user
-has_many :appointments
-has_many :students, through: :appointments
-
-class Student < ApplicationRecord
-belongs_to :user
-has_many :appointments
-has_many :tutors, through: :appointments
-
-class Appointment < ApplicationRecord
-belongs_to :tutor
-belongs_to :student
+    def destroy
+        current_user.destroy
+        session.delete(:user_id)
+        redirect_to '/'
+    end
 ```
 
+So, here in the UsersController is where most of the work is being done. As you can see, I've got all my CRUD routes for the different types of users here except for index, which I chose to put in each class's respective controllers. What you may notice missing, though, are the helper methods being utilized here. Those, I put in the Tutors and Students controllers:
 
-**Alternative =>**  Don’t set up the the explicit has_one portion of the user/tutor/student relationship, and just add belongs_to to the student & tutor tables/models. This will still keep the code pretty DRY, but I won't be able to access the relationship bidirectionally. So `tutor.user.name` will work just fine, but I can't do `user.tutor.resume`
+```
+class TutorsController < UsersController
+    def index
+        @tutors = Tutor.all
+    end
 
+    private
+
+    def user_params
+        params.require(params_type).permit(:id, :type, :username, :password, :resume, :zoom_link)
+    end
+
+    def new_user
+        user = Tutor.new
+    end
+
+    def show_path
+        tutor_path(current_user)
+    end
+end
+
+class StudentsController < UsersController
+    def index
+        @students = Student.all
+    end
+
+    private
+
+    def user_params
+      params.require(params_type).permit(:id, :type, :username, :password, :resume, :about_me, :level, :gold_stars)
+    end
+
+    def new_user
+        user = Student.new
+    end
+
+    def show_path
+        student_path(current_user)
+    end
+end
+```
+
+As you can see, I putdifferent iterations of the same methods (user_params, new_user, show_path) in each controller. That way it stays contained within itself and can provide the appropriate data depending on which controller the operations are happening. Initially I had these methods in the UsersController, but of course they needed conditionals in order to operate correctly. That means more processing, which is not the objective of keeping code DRY. Also, I was looking for a way to set this application up so that it could be expanded if I wanted to add *many* different types of users rather than just two - which would have meant adding more and more conditionals in these methods as it expanded. 
+
+(props to Rob on this blog post where I got the idea: https://rmulhol.github.io/ruby/2015/04/27/solid-rails.html)
+
+I put a lot of work in trying to come up with the cleanest DRYest way possible to work within the structure of Ruby with this type of setup. There is probably a better way out there to set up multiple types of users with different attributes/capabilities, but ultimately I'm pleased with this setup from the table => model => controller flow. 
+
+As for the views..... there is still work to be done there. Currently there are more conditionals in my views and their helpers than I would prefer. Also, since the routing is ultimately done from the Students and Tutors controllers, I have to have view pages that match each, which means I can't just have a views/users directory where everything goes in and out from. The next step is to clean up these views with less logic and put in some partials that can be reused throughout the different types of users view pages. I'll save that for a different blog post.
