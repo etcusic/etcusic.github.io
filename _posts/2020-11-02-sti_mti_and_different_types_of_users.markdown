@@ -153,12 +153,12 @@ And there it is. As DRY as I could make it. I'm still wondering if there is a be
 
 ```
 class UsersController < ApplicationController
-  def new
-def create
-def show
-def edit
-def update
-def destroy
+ def new
+ def create
+ def show
+ def edit
+ def update
+ def destroy
 	
 class StudentsController < ApplicationController
   def index
