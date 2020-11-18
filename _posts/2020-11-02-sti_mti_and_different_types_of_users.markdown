@@ -181,3 +181,5 @@ Routes:
 I still need to play around with this structure to figure out the best way to configure it (hopefully I can get around to writing a separate blog about the ins and outs of this type of class and route inheritance). I did need to write a couple of helper methods in the application controller to handle some of the routing decisions to direct it to either Students or Tutors, but it's pretty light at the moment. Not sure how it would hold up to growth with its current structure, though.
 
 One aspect I need to explore more is using `resources :users` for some of the routing actions. That will allow me to clean up my views directory a bit more (at the moment there is a good bit of repetition between the tutors and students). It should also allow me to reuse some of the routing names as well, but we'll see. My ideas always sound way better than they turn out in implementation, lol.
+
+link for Controller Inheritance blog submission: https://etcusic.github.io/many_to_many_relationship_b_t_tables_that_inherit_from_user_table
