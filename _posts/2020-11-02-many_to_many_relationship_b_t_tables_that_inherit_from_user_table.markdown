@@ -16,24 +16,27 @@ Here is the basic structure of my application's controllers, going through them 
 
 ```
 ApplicationController < ActionController::Base
- def current_user
-  @user ||= User.find_by_id(session[:user_id])
- end
-	
-	def logged_in?
-	  session[:user_id]
-	end
+
+  def current_user
+    @user ||= User.find_by_id(session[:user_id])
+  end
+
+  def logged_in?
+    session[:user_id]
+  end
+
 end
 ```
 
 This is definitely not an exhaustive look at the helper methods and before actions that I had set up in the ApplicationController, but you get the idea. As you can see, I'm using `@user` as my user's variable no matter what the class, which allows me to reuse this variable all over the application no matter what the class type of the user is.  (quick note: I'm skipping over the SessionsController because it needed very minimal refactoring) - Ok, now on to the UsersController:
 
 ```
-UsersController < ApplicationController
-  before_action :current_user, only: [:show, :edit, :update, :destroy]
-	def new
-	 @user = new_user
-	end
+class UsersController < ApplicationController
+    before_action :current_user, only: [:show, :edit, :update, :destroy]
+
+    def new
+        @user = new_user
+    end
 
     def create
         @user = User.new(user_params)
@@ -53,7 +56,7 @@ UsersController < ApplicationController
 
     def update
         if @user.update(user_params)
-            redirect_to show_path 
+            redirect_to show_path
         else 
             render :edit
         end
@@ -63,7 +66,9 @@ UsersController < ApplicationController
         current_user.destroy
         session.delete(:user_id)
         redirect_to '/'
-    end
+    end    
+
+end
 ```
 
 So, here in the UsersController is where most of the work is being done. As you can see, I've got all my CRUD routes for the different types of users here except for index, which I chose to put in each class's respective controllers. What you may notice missing, though, are the helper methods being utilized here. Those, I put in the Tutors and Students controllers:
