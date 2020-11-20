@@ -16,9 +16,9 @@ Here is the basic structure of my application's controllers, going through them 
 
 ```
 ApplicationController < ActionController::Base
-  def current_user
-	  @user ||= User.find_by_id(session[:user_id])
-	end
+ def current_user
+  @user ||= User.find_by_id(session[:user_id])
+ end
 	
 	def logged_in?
 	  session[:user_id]
@@ -32,8 +32,8 @@ This is definitely not an exhaustive look at the helper methods and before actio
 UsersController < ApplicationController
   before_action :current_user, only: [:show, :edit, :update, :destroy]
 	def new
-        @user = new_user
-    end
+	 @user = new_user
+	end
 
     def create
         @user = User.new(user_params)
@@ -77,7 +77,7 @@ class TutorsController < UsersController
     private
 
     def user_params
-        params.require(params_type).permit(:id, :type, :username, :password, :resume, :zoom_link)
+        params.require(:tutor).permit(:id, :type, :username, :password, :resume, :zoom_link)
     end
 
     def new_user
@@ -97,7 +97,7 @@ class StudentsController < UsersController
     private
 
     def user_params
-      params.require(params_type).permit(:id, :type, :username, :password, :resume, :about_me, :level, :gold_stars)
+      params.require(:student).permit(:id, :type, :username, :password, :resume, :about_me, :level, :gold_stars)
     end
 
     def new_user
