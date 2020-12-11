@@ -1,7 +1,7 @@
 ---
 layout: post
 title:      "'Single Page' JavaScript App Using Object Orientation"
-date:       2020-12-11 03:03:09 +0000
+date:       2020-12-10 22:03:10 -0500
 permalink:  single_page_javascript_app_using_object_orientation
 ---
 
