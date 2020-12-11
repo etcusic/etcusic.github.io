@@ -20,9 +20,10 @@ I divided my Javascript files into 3 distinct sections: Models, Pages/HTML block
 
 A key component to having these blocks of HTML code added and subtracted from the page is to divide the base HTML page (index.html) into a few different sections that will remain constant. The only difference is which blocks are going into which compartments. For this application, I used 3 different segments: a header, a side panel, and then a main comparment where most of the interaction takes place. I used CSS class identication for this, so that I could more efficiently wipe and maneuver elements during the application's various transitions. This brings us to the most crucial point in the application's structure:
 
-3) Services/Actions: These files are what handle the transitions, and designing them well consolidates the logic of the application and prevents a spaghetti code nightmare. I structured these files as their own distinct class with only class level methods. This both keeps the types of functions in an easy to find file, plus it makes for writing very readable code when calling these class methods (example: Initialize.landingPage() ). For now I have 4 main files to handle the different types of actions and transitions:
+3) Services/Actions: These files are what handle the transitions, and designing them well consolidates the logic of the application and prevents a spaghetti code nightmare. I structured these files as their own distinct class with only class level methods. This both keeps the types of functions in an easy to find file, plus it makes for writing very readable code when calling these class methods (example: `Initialize.landingPage( )` ). For now I have 4 main files to handle the different types of actions and transitions:
 
 * class Initialize: This class is primarily used to initialize a "page" - or the specific setup of the view at that moment. I gave all of these class methods that handle pages/views an almost identical setup to give the code's logic and flow continuity throughout its use. This allows to much more easily adjust the code in different areas of the program should a problem arise or if I want to add a new feature to the application. The basic structure of these functions is: 1) wipe the current view from the different sections of the page. 2) Populate those wiped segments with the desired DOM elements for that view. 3) Add event listeners to the items that require it. Here is an example: 
+
 ```
 class Initialize {
 
@@ -32,9 +33,11 @@ static basePage (session) {
    .then( API.loadDecks(session) )
 }
 ```
+
 I set up a newPromise() function at the top of Initialize class in order to handle the ordering of the actions. As you can probably see, each action must be complete before the next one is run. The view can't be built until the current one is wiped or else it might wipe the one it's building during its asynchronous ordering, and then event listeners can't be added until its elements are populated onto the page. Which brings us to the next category.
 
 *  class Display: This class handles the wiping and building of the various segments of HTML. I put a specific wipe and build function for each segment so that I can get at a specific area if the others don't need to be changed for that action. The wipe function handles all elements that are direct children of that particular segment. Then, the build function takes an array of HTML blocks and adds them to that segment. Naturally, the ordering of this array needs to be accurate as it adds one block after the other. Here is an example:
+
 ```
 class Display {
 
@@ -46,6 +49,7 @@ static buildPanel (nodesArray) {
   nodesArray.forEach( node => document.getElementById('left-container').innerHTML += node)
 }
 ```
+
 This is definitely a heavy handed way of adjusting an HTML page with JavaScript, but these moves specifically handle the big adjustments based on what's happening at the time. The small adjustments will take place within the different game classes themselves (or with a helper function file attached). This way I can quickly create, add, or subtract new features to the application without having to untangle complex transitions. I also added a wipeAll() and buildPage() function that handles all of those events if an action calls for a full reset.
 
 *   class AddListener: This class handles the getting of any element(s) that need event listeners and providing the action function needed. Each function in this class handles only one add listening event, and then the appropriate ones are placed in a setListeners() function that every page class has, which is then called at the end of every page's corresponding Initialize function. And lastly,
