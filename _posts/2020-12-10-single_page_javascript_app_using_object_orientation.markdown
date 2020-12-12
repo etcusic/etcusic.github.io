@@ -20,7 +20,7 @@ I divided my Javascript files into 3 distinct sections: Models, Pages/HTML block
 
 A key component to having these blocks of HTML code added and subtracted from the page is to divide the base HTML page (index.html) into a few different sections that will remain constant. The only difference is which blocks are going into which compartments. For this application, I used 3 different segments: a header, a side panel, and then a main comparment where most of the interaction takes place. I used CSS class identication for this, so that I could more efficiently wipe and maneuver elements during the application's various transitions. This brings us to the most crucial point in the application's structure:
 
-3) Services/Actions: These files are what handle the transitions, and designing them well consolidates the logic of the application and prevents a spaghetti code nightmare. I structured these files as their own distinct class with only class level methods. This both keeps the types of functions in an easy to find file, plus it makes for writing very readable code when calling these class methods (example: `Initialize.landingPage( )` ). For now I have 4 main files to handle the different types of actions and transitions:
+3) Services/Actions: These files are what handle the transitions, and designing them well consolidates the logic of the application and prevents a spaghetti code nightmare. I structured these files as their own distinct class with only class level methods. This both keeps the types of functions in an easy to find file, plus it makes for writing very readable code when calling these class methods (example: `Initialize.landingPage()` ). For now I have 4 main files to handle the different types of actions and transitions:
 
 * class Initialize: This class is primarily used to initialize a "page" - or the specific setup of the view at that moment. I gave all of these class methods that handle pages/views an almost identical setup to give the code's logic and flow continuity throughout its use. This allows to much more easily adjust the code in different areas of the program should a problem arise or if I want to add a new feature to the application. The basic structure of these functions is: 1) wipe the current view from the different sections of the page. 2) Populate those wiped segments with the desired DOM elements for that view. 3) Add event listeners to the items that require it. Here is an example: 
 
@@ -46,7 +46,7 @@ static wipePanel() {
 }
 
 static buildPanel (nodesArray) {
-  nodesArray.forEach( node => document.getElementById('left-container').innerHTML += node)
+  nodesArray.forEach( node => document.getElementById('left-container').innerHTML += node )
 }
 ```
 
