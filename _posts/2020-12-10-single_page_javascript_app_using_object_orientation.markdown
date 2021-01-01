@@ -1,6 +1,6 @@
 ---
 layout: post
-title:      "'Single Page' JavaScript App Using Object Orientation"
+title:      "OO Design in a Single Page JS App - a Primer for React"
 date:       2020-12-10 22:03:10 -0500
 permalink:  single_page_javascript_app_using_object_orientation
 ---
