@@ -117,8 +117,6 @@ end
 
 As you can see, I putdifferent iterations of the same methods (user_params, new_user, show_path) in each controller. That way it stays contained within itself and can provide the appropriate data depending on which controller the operations are happening. Initially I had these methods in the UsersController, but of course they needed conditionals in order to operate correctly. That means more processing, which is not the objective of keeping code DRY. Also, I was looking for a way to set this application up so that it could be expanded if I wanted to add *many* different types of users rather than just two - which would have meant adding more and more conditionals in these methods as it expanded. 
 
-(props to Rob on this blog post where I got the idea: https://rmulhol.github.io/ruby/2015/04/27/solid-rails.html)
-
 I put a lot of work in trying to come up with the cleanest DRYest way possible to work within the structure of Ruby with this type of setup. There is probably a better way out there to set up multiple types of users with different attributes/capabilities, but ultimately I'm pleased with this setup from the table => model => controller flow. 
 
 As for the views..... there is still work to be done there. Currently there are more conditionals in my views and their helpers than I would prefer. Also, since the routing is ultimately done from the Students and Tutors controllers, I have to have view pages that match each, which means I can't just have a views/users directory where everything goes in and out from. The next step is to clean up these views with less logic and put in some partials that can be reused throughout the different types of users view pages. I'll save that for a different blog post.
