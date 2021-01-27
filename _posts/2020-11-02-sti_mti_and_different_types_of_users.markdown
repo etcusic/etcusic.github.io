@@ -6,6 +6,7 @@ permalink:  sti_mti_and_different_types_of_users
 ---
 
 
+Context:
 For this project we need to have a many-to-many relationship with a has_many through relationship. I decided to do an application in which tutors can have many students through appointments and vice versa. With both tutors and students being a type of user I had a decision to make about how I wanted to set up the tables and classes in order to have the cleanest/clearest setup possible for my relationships. For a base user model, I wanted there to be a name, email, and password_digest, and then tutors & students would have several of their own unique attributes ascribed to their models. There are a number of ways to set this up as models and tables, so I had to sort through them to find the clearest and DRYest way possible.
 
 The problem =>  To me, the cleanest/DRYest approach was going to have a User parent class and table from which Tutors & Students would inherit. Something like this:
