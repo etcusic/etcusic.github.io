@@ -1,7 +1,7 @@
 ---
 layout: post
-title:      "Setting Up REDUX"
-date:       2021-01-15 23:48:11 +0000
+title:      "Setting Up Redux"
+date:       2021-01-15 18:48:12 -0500
 permalink:  setting_up_redux
 ---
 
