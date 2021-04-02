@@ -1,7 +1,7 @@
 ---
 layout: post
 title:      "React on Github Pages"
-date:       2021-04-02 14:25:24 +0000
+date:       2021-04-02 10:25:24 -0400
 permalink:  react_on_github_pages
 ---
 
@@ -43,6 +43,8 @@ function App() {
 export default App;
 ```
 Ok, let's deploy! First, `git add .` - `git commit` and `git push`. Then run `npm run deploy`. If everything runs through ok, then just visit the url in your browser, and you'll see your application running on the page!
+
+Note:  This is the command we run every time we want to deploy our latest changes. If we're working on the app, we can make commits and push to the Github repo to our heart's content, but it won't make any changes on the actual hosted page until we run `npm run deploy`. 
 
 Next blog, I'll set up a Rails backend on Heroku so that we can be functioning with a backend as well.
 
