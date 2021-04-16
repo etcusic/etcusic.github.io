@@ -1,7 +1,7 @@
 ---
 layout: post
 title:      "Implementing Serializer with Rails API"
-date:       2021-04-16 20:06:00 +0000
+date:       2021-04-16 16:06:00 -0400
 permalink:  implementing_serializer_with_rails_api
 ---
 
@@ -49,5 +49,7 @@ There is a key design choice that I'm still not sure about. The ingredients need
 1) Set up a Ruby method which creates a dictionary of all supplies, and then map over all ingredients associated with pantry, recipes, etc and assemble them there. This would be easy enough. It would slow down the processing a bit on the backend, but not too horribly. The issue I have with this method is that whenever the user updates a supply, then it will additionally need to update each ingredient on the frontend as well. Not the end of the world, but I don't love it either.
 
 2) Leave the serializer as is, send the raw data needed for the associations (`:supply_id`), and then assemble the data on the frontend. On the one hand, I don't love the idea of the frontend being responsible for assembling the data because it seems like that is asking for glitches. On the other hand, if a single method can be used for ingredient/supply assembly and is properly synched up with React/Redux's lifecycle methods, then it would be a more efficeint way to send and update the associated data.
+
+3) Assemble the data on the backend, but only assemble it for more specific requests. This way less data needs to be processed at once and doesn't result in a slow initialization. The downside is that it requires more calls to the backend, which doesn't optimize the structure of React.
 
 That's all I've got for now. If you have a strong opinion on how this code should be structured please let me know! I'd love to hear feedback.
