@@ -1,11 +1,11 @@
 # Site settings
 author: Eli Cusic
-title: Exploring Object Oriented Design
+title: Kitchen to Coding
 header-img: img/home-bg.png
 email: tntitans31@gmail.com
 copyright_name: Eli Cusic
 description: > # this means to ignore newlines until "baseurl:"
-  A blog to document my progress as a full stack developer
+  A blog to document my progress from chef to software engineer
 baseurl: "" # the subpath of your site, e.g. /blog
 twitter_username: 
 github_username:  etcusic
