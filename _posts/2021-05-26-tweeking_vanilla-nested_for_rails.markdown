@@ -92,7 +92,7 @@ const data = element.dataset;
 console.log(data)  // => DOMStringMap {fieldsWrapperSelector: "card-row", undoText: "Undo", undoLinkClasses: ""}
 let wrapper = element.parentElement;
 console.log(wrapper)  // => <button> element that the link is encased in
-if (sel = data.fieldsWrapperSelector) wrapper = element.closest(sel);   // -- previous line => didn't account for class
+if (sel = data.fieldsWrapperSelector) wrapper = element.closest(sel);  
 console.log(wrapper)  // => null
 ```
 As you can probably see, something happens on that last line where the wrapper should be altered to the `<tr class="card-row">` element, but instead produces `null`. After a bit of research and playing around with it, I realized that the `element.closest( )` method needs a period preceding the class name (data.fildsWrapperSelector => "card-row"). So all it took was altering that line to this:
