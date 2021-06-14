@@ -1,7 +1,7 @@
 ---
 layout: post
 title:      "Creating a Simple Search with Rails"
-date:       2021-06-04 19:53:49 +0000
+date:       2021-06-04 15:53:50 -0400
 permalink:  creating_a_simple_search_with_rails
 ---
 
@@ -115,6 +115,9 @@ At this point, the only tricky part is getting the syntax right for the rails fo
 </table>
 ```
 **Search Filter:**
+
+*revised => [click here](https://etcusic.github.io/simplified_search_query_in_rails) to see a better query method for deck search*
+
 Now we just need to employ some search logic to filter out the decks according to the search. I chose to keep all the methods within the class, but I'm sure a proper stickler would argue that it belongs in a module or as a class method within the Deck class. Also, I chose to link them together through by passing them as arguments. The method nested deepest is run first and then moves outwards. I left a note in the `deck` instance method. Here is what the finished product for the `DeckSearch` class looks like:
 ```
 class DeckSearch
